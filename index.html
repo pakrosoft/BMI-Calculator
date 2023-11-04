@@ -1,0 +1,146 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8"></meta>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"></meta>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f3f3;
+            text-align: center;
+        }
+
+        .calculator {
+            background-color: #fff;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        label, select, input {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function calculateBMI() {
+            const height = parseFloat(document.getElementById("height").value) / 100; // Convert to meters
+            const weight = parseFloat(document.getElementById("weight").value);
+            const gender = document.getElementById("gender").value;
+
+            if (isNaN(height) || isNaN(weight) || height <= 0 || weight <= 0) {
+                document.getElementById("result").textContent = "Please enter valid height and weight.";
+                document.getElementById("chartContainer").style.display = "none";
+            } else {
+                const bmi = weight / (height * height);
+                const interpretation = getBMIInterpretation(bmi, gender);
+                document.getElementById("result").textContent = `Your BMI is ${bmi.toFixed(2)} (${interpretation}).`;
+                updateChart(bmi);
+            }
+        }
+
+        function getBMIInterpretation(bmi, gender) {
+            if (gender === "male") {
+                if (bmi < 18.5) {
+                    return "Underweight (Male)";
+                } else if (bmi < 24.9) {
+                    return "Normal Weight (Male)";
+                } else if (bmi < 29.9) {
+                    return "Overweight (Male)";
+                } else {
+                    return "Obese (Male)";
+                }
+            } else if (gender === "female") {
+                if (bmi < 18.5) {
+                    return "Underweight (Female)";
+                } else if (bmi < 24.9) {
+                    return "Normal Weight (Female)";
+                } else if (bmi < 29.9) {
+                    return "Overweight (Female)";
+                } else {
+                    return "Obese (Female)";
+                }
+            } else {
+                return "Unknown gender";
+            }
+        }
+
+        function updateChart(bmi) {
+            const ctx = document.getElementById("bmiChart").getContext("2d");
+            const data = {
+                labels: ["BMI"],
+                datasets: [
+                    {
+                        data: [bmi],
+                        backgroundColor: "#007BFF",
+                    },
+                ],
+            };
+            const options = {
+                legend: { display: false },
+                title: {
+                    display: true,
+                    text: "Your BMI",
+                },
+            };
+            const chart = new Chart(ctx, {
+                type: "bar",
+                data: data,
+                options: options,
+            });
+            document.getElementById("chartContainer").style.display = "block";
+        }
+    </script>
+</head>
+<body>
+  <h3 style="text-align: center;"><b>BMI Calculator</b></h3><h4 style="text-align: center;">Calculate your BMI by weight Kg and Feet</h4><div style="text-align: center;">Calculate your BMI by Male and Female Gender</div><p><br />
+    <div class="calculator">
+        <h1>BMI Calculator</h1>
+        <label for="gender">Gender:</label>
+        <center><select id="gender">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+        </select></center>
+        <label for="height">Height (in cm):</label>
+        <input id="height" placeholder="Enter your height" required="" type="number" />
+        <label for="weight">Weight (in kg):</label>
+        <input id="weight" placeholder="Enter your weight" required="" type="number" />
+        <button onclick="calculateBMI()">Calculate BMI</button>
+        <div id="result"></div>
+        <div id="chartContainer">
+            <canvas height="200" id="bmiChart" width="400"></canvas>
+        </div>
+    </div>
+</body>
+</html>
